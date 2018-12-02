@@ -7,7 +7,11 @@ import javax.swing.Timer;
 
 public class Counter extends JLabel {
 	Counter() {
-		setText("000");
+		update(0);
+	}
+	
+	protected void update(int count) {
+		setText(getThreeDigitCount(count));
 	}
 	
 	protected String getThreeDigitCount(int count) {

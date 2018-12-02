@@ -24,16 +24,15 @@ public class Game implements Runnable {
         frame.add(statusPanel, BorderLayout.SOUTH);
         final JLabel status = new JLabel("Running...");
         statusPanel.add(status);
+
+        final ControlPanel controlPanel = new ControlPanel();
+        frame.add(controlPanel, BorderLayout.NORTH);
         
-        final BoardModel boardModel = new BoardModel(Level.HARD);
+        final BoardModel boardModel = new BoardModel(Level.HARD, controlPanel);
 
         // Main playing area
         final GamePanel court = new GamePanel(boardModel);
         frame.add(court, BorderLayout.CENTER);
-
-        // Reset button
-        final Panel controlPanel = new ControlPanel(boardModel);
-        frame.add(controlPanel, BorderLayout.NORTH);
         
         // Put the frame on the screen
         frame.pack();

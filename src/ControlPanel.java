@@ -1,4 +1,5 @@
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -11,20 +12,31 @@ public class ControlPanel extends Panel {
     private static final String SMILE_FILE = "files/smile.png";
     private static final int BUTTONS_PADDING = 5;
     private static final int PANEL_HEIGHT = 40;
+    private final GameTimer gameTimer;
+    private final Counter flagCounter;
     
-	int timer_count = 0;
-    
-	ControlPanel(BoardModel boardModel) {
-		super(boardModel);
+	ControlPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		
-		add(new GameTimer());
+		gameTimer = new GameTimer();
+		add(gameTimer);
+		
 		add(Box.createHorizontalGlue());
 		createResetButton();
 		add(Box.createRigidArea(new Dimension(BUTTONS_PADDING, PANEL_HEIGHT)));
 		createInstructionsButton();
 		add(Box.createHorizontalGlue());
-		add(new Counter());
+		
+		flagCounter = new Counter();
+		add(flagCounter);
+	}
+	
+	public void startTimer(TimeListener timeListener) {
+		gameTimer.startTimer(timeListener);
+	}
+	
+	public void updateFlagCounter(int flagNumber) {
+		flagCounter.update(flagNumber);
 	}
 	
 	private void createResetButton() {

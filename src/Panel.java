@@ -17,12 +17,6 @@ public class Panel extends JPanel {
 	final private Color BORDER_REST_DARK_COLOR = new Color(166, 166, 166);
 	final private Color BORDER_PRESSED_COLOR = Color.GRAY;
 	
-	final protected BoardModel boardModel;
-	
-	Panel(BoardModel boardModel) {
-		this.boardModel = boardModel;
-	}
-	
 	public JButton getButton(MouseAdapter onClick) {
 		final JButton button = new JButton();
         button.setBackground(BACKGROUND_REST_COLOR);
