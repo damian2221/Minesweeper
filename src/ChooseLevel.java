@@ -40,10 +40,10 @@ public class ChooseLevel {
 	
 	private void startGame(Level level) {
 		clearFrame();
-    	final ControlPanel controlPanel = new ControlPanel();
+    	final ControlPanel controlPanel = new ControlPanel(frame);
         frame.add(controlPanel, BorderLayout.NORTH);
         
-        final BoardModel boardModel = new BoardModel(level, controlPanel);
+        final BoardModel boardModel = new BoardModel(level, controlPanel, frame);
 
         final GamePanel gamePanel = new GamePanel(boardModel);
         frame.add(gamePanel, BorderLayout.CENTER);

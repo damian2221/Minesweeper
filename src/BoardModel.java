@@ -3,6 +3,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 public class BoardModel {
 	static final private int LOSE_GAME_TIME = 999;
 	
@@ -16,13 +19,15 @@ public class BoardModel {
 	private int latestNotUsedY = 1;
 	private boolean isGameFinished = false;
 	final private ControlPanel controlPanel;
+	final private JFrame frame;
 	
-	BoardModel(Level level, ControlPanel controlPanel) {
+	BoardModel(Level level, ControlPanel controlPanel, JFrame frame) {
 		this.level = level;
 		minesRemaining = flagsRemaining = level.getMines();
 		randomMinesPositions = randomizeMinesPositions();
 		boardFields = new BoardField[getWidth()][getHeight()];
 
+		this.frame = frame;
 		this.controlPanel = controlPanel;
 		this.controlPanel.startTimer(new TimeListener() {
 			public void timeChanged(int time) {
@@ -44,8 +49,13 @@ public class BoardModel {
 				}
 			}
 		}
-		
+
 		controlPanel.stopTimer();
+		JOptionPane.showMessageDialog(frame,
+			    "You've lost the game. :( Click \"OK\" to start again!",
+			    "You lost",
+			    JOptionPane.PLAIN_MESSAGE);
+		controlPanel.restartGame();
 	}
 
 	private void winGame() {

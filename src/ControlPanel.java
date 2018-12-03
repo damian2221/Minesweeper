@@ -14,8 +14,11 @@ public class ControlPanel extends JPanel {
     private static final int PANEL_HEIGHT = 40;
     private final GameTimer gameTimer;
     private final Counter flagCounter;
+    private final JFrame frame;
     
-	ControlPanel() {
+	ControlPanel(JFrame frame) {
+		this.frame = frame;
+		
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		
 		gameTimer = new GameTimer();
@@ -43,10 +46,14 @@ public class ControlPanel extends JPanel {
 		flagCounter.update(flagNumber);
 	}
 	
+	public void restartGame() {
+    	(new ChooseLevel(frame)).openChooseLevelScreen();
+	}
+	
 	private void createResetButton() {
 		final JButton resetButton = new Button(new MouseAdapter() {
 	            public void mouseClicked(MouseEvent e) {
-	                //court.reset();
+	            	restartGame();
 	            }
 	        });
 		
@@ -70,6 +77,4 @@ public class ControlPanel extends JPanel {
 		instructionsButton.setHorizontalAlignment(SwingConstants.CENTER);
 		add(instructionsButton);
 	}
-	
-	
 }
