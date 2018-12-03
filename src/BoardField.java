@@ -3,23 +3,38 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 public abstract class BoardField {
     private static final String FLAG_FILE = "files/flag.png";
     
-	final protected JButton fieldButton;
+	final protected Button fieldButton;
 	final protected BoardModel boardModel;
+	final Coordinate coordinate;
 	boolean isFlagged = false;
+	boolean isUncovered = false;
 	
-	BoardField(JButton fieldButton, BoardModel boardModel) {
+	BoardField(Button fieldButton, BoardModel boardModel, Coordinate coordinate) {
 		this.fieldButton = fieldButton;
 		this.boardModel = boardModel;
+		this.coordinate = coordinate;
 	}
 	
-	public abstract void flagListener();
+	public abstract void uncoverListener();
+	
+	public void uncover() {
+		if (!isUncovered && (!boardModel.isGameFinished() || isMine())) {
+			isUncovered = true;
+			Button.setLockedStyle(fieldButton);
+			uncoverListener();
+		}
+	}
+	
+	public abstract boolean isMine();
 	
 	public void flag() {
+		if (isUncovered || boardModel.isGameFinished()) {
+			return;
+		}
 		try {
 			ImageIcon icon = null;
 			if (!isFlagged) {
@@ -30,7 +45,7 @@ public abstract class BoardField {
             System.out.println("Internal Error:" + e.getMessage());
         } finally {
         	isFlagged = !isFlagged;
-        	flagListener();
+        	boardModel.flag(isMine(), !isFlagged);
         }
-	};
+	}
 }

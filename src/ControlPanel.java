@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class ControlPanel extends Panel {
+public class ControlPanel extends JPanel {
     private static final String SMILE_FILE = "files/smile.png";
     private static final int BUTTONS_PADDING = 5;
     private static final int PANEL_HEIGHT = 40;
@@ -35,12 +35,16 @@ public class ControlPanel extends Panel {
 		gameTimer.startTimer(timeListener);
 	}
 	
+	public void stopTimer() {
+		gameTimer.stopTimer();
+	}
+	
 	public void updateFlagCounter(int flagNumber) {
 		flagCounter.update(flagNumber);
 	}
 	
 	private void createResetButton() {
-		final JButton resetButton = getButton(new MouseAdapter() {
+		final JButton resetButton = new Button(new MouseAdapter() {
 	            public void mouseClicked(MouseEvent e) {
 	                //court.reset();
 	            }
@@ -56,7 +60,7 @@ public class ControlPanel extends Panel {
 	}
 	
 	private void createInstructionsButton() {
-		final JButton instructionsButton = getButton(new MouseAdapter() {
+		final JButton instructionsButton = new Button(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 //court.reset();
             }

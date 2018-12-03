@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.swing.*;
 
-public class GamePanel extends Panel {
+public class GamePanel extends JPanel {
 	final protected BoardModel boardModel;
 	
 	GamePanel(BoardModel boardModel) {
@@ -18,16 +18,15 @@ public class GamePanel extends Panel {
 	}
 	
 	private void buildBoard() {
-		for (int i = 0; i < boardModel.getWidth(); i++) {
-			for (int j = 0; j < boardModel.getHeight(); j++) {
-				final int coordinateX = i+1;
-				final int coordinateY = j+1;
-				final JButton fieldButton = getButton(new MouseAdapter() {
+		for (int i = 0; i < boardModel.getHeight(); i++) {
+			for (int j = 0; j < boardModel.getWidth(); j++) {
+				Coordinate coordinate = new Coordinate(j+1, i+1);
+				final Button fieldButton = new Button(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
 						if (SwingUtilities.isRightMouseButton(e)) {
-							boardModel.flag(coordinateX, coordinateY);
+							boardModel.flag(coordinate);
 						} else {
-							boardModel.uncover(coordinateX, coordinateY);
+							boardModel.uncover(coordinate);
 						}
 					}
 				});

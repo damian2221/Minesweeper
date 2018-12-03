@@ -1,11 +1,25 @@
-import javax.swing.JButton;
+import java.util.Iterator;
+import java.util.List;
 
 public class SafeField extends BoardField {
-	SafeField(JButton fieldButton, BoardModel boardModel) {
-		super(fieldButton, boardModel);
+	SafeField(Button fieldButton, BoardModel boardModel, Coordinate coordinate) {
+		super(fieldButton, boardModel, coordinate);
 	}
 	
-	public void flagListener() {
-		boardModel.flag(false);
+	public boolean isMine() {
+		return false;
+	}
+	
+	public void uncoverListener() {
+		final int adjacentMines = boardModel.getAdjacentMines(coordinate);
+		if (adjacentMines == 0) {
+			final List<Coordinate> adjacentFields = boardModel.getAdjacentFields(coordinate);
+			Iterator<Coordinate> iter = adjacentFields.iterator();
+			while (iter.hasNext()) {
+				boardModel.uncover(iter.next());
+			}
+		} else {
+			fieldButton.setText(Integer.toString(adjacentMines));
+		}
 	}
 }

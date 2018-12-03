@@ -1,11 +1,33 @@
-import javax.swing.JButton;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class MineField extends BoardField {
-	MineField(JButton fieldButton, BoardModel boardModel) {
-		super(fieldButton, boardModel);
+    private static final String BOMB_FILE = "files/bomb.png";
+    
+	MineField(Button fieldButton, BoardModel boardModel, Coordinate coordinate) {
+		super(fieldButton, boardModel, coordinate);
 	}
 	
-	public void flagListener() {
-		boardModel.flag(true);
+	public boolean isMine() {
+		return true;
+	}
+	
+	public void uncoverListener() {
+		try {
+			ImageIcon icon = null;
+			if (!isFlagged) {
+				icon = new ImageIcon(ImageIO.read(new File(BOMB_FILE)));
+			}
+			fieldButton.setIcon(icon);
+        } catch (IOException e) {
+            System.out.println("Internal Error:" + e.getMessage());
+        } finally {
+        	if (!boardModel.isGameFinished()) {
+        		boardModel.loseGame();
+        	}
+        }
 	}
 }

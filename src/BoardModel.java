@@ -1,19 +1,20 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JButton;
-
 public class BoardModel {
+	static final private int LOSE_GAME_TIME = 999;
+	
 	final private BoardField boardFields[][];
 	final private Level level;
-	private int timeElapsed = 0;
 	private int minesRemaining;
 	private int flagsRemaining;
 	final List<Integer> randomMinesPositions;
 	/* latestNotUsedX and latestNotUsedY are both -1 when board is fully initialized*/
 	private int latestNotUsedX = 1;
 	private int latestNotUsedY = 1;
+	private boolean isGameFinished = false;
 	final private ControlPanel controlPanel;
 	
 	BoardModel(Level level, ControlPanel controlPanel) {
@@ -25,53 +26,119 @@ public class BoardModel {
 		this.controlPanel = controlPanel;
 		this.controlPanel.startTimer(new TimeListener() {
 			public void timeChanged(int time) {
-				
+				if (time >= LOSE_GAME_TIME) {
+					loseGame();
+				}
 			}
 		});
 		controlPanel.updateFlagCounter(flagsRemaining);
 	}
 	
-	
-
-	public void flag(int coordinateX, int coordinateY) {
-		getBoardField(coordinateX, coordinateY).flag();
-	}
-	
-	public void flag(boolean isMine) {
-		flagsRemaining--;
-		controlPanel.updateFlagCounter(flagsRemaining);
-		if (isMine) {
-			minesRemaining--;
+	public void loseGame() {
+		isGameFinished = true;
+		for (int i = 1; i <= getWidth(); i++) {
+			for (int j = 1; j < getHeight(); j++) {
+				Coordinate coordinate = new Coordinate(i, j);
+				if (isMine(coordinate)) {
+					uncover(coordinate);
+				}
+			}
 		}
+		
+		controlPanel.stopTimer();
 	}
-	
-	public void uncover(int coordinateX, int coordinateY) {
+
+	private void winGame() {
 		
 	}
 	
-	public void addBoardField(JButton fieldButton) {
+	public int getAdjacentMines(Coordinate coordinate) {
+		int adjacentMines = 0;
+		for (int i = Math.max(coordinate.getX()-1, 1); 
+				i <= Math.min(coordinate.getX()+1, getWidth()); i++) {
+			for (int j = Math.max(coordinate.getY()-1, 1); 
+					j <= Math.min(coordinate.getY()+1, getHeight()); j++) {
+				if ((i != coordinate.getX() || j != coordinate.getY()) && 
+						isMine(new Coordinate(i, j))) {
+					adjacentMines++;
+				}
+			}
+		}
+		
+		return adjacentMines;
+	}
+	
+	public List<Coordinate> getAdjacentFields(Coordinate coordinate) {
+		List<Coordinate> adjacentFields = new LinkedList<Coordinate>();
+		for (int i = Math.max(coordinate.getX()-1, 1); 
+				i <= Math.min(coordinate.getX()+1, getWidth()); i++) {
+			for (int j = Math.max(coordinate.getY()-1, 1); 
+					j <= Math.min(coordinate.getY()+1, getHeight()); j++) {
+				if (i != coordinate.getX() || j != coordinate.getY()) {
+					adjacentFields.add(new Coordinate(i, j));
+				}
+			}
+		}
+		
+		return adjacentFields;
+	}
+
+	public void flag(Coordinate coordinate) {
+		if (flagsRemaining > 0) {
+			getBoardField(coordinate).flag();
+		}
+	}
+	
+	public void flag(boolean isMine, boolean isDeflagged) {
+		if (isDeflagged) {
+			flagsRemaining++;
+			if (isMine) {
+				minesRemaining++;
+			}
+		} else {
+			flagsRemaining--;
+			if (isMine) {
+				minesRemaining--;
+			}
+		}
+		
+		controlPanel.updateFlagCounter(flagsRemaining);
+		if (minesRemaining == 0) {
+			winGame();
+		}
+	}
+	
+	public void uncover(Coordinate coordinate) {
+		getBoardField(coordinate).uncover();
+	}
+	
+	public void addBoardField(Button fieldButton) {
 		if (isBoardInitialized()) {
 			//error
 		}
-		int position = (10*(latestNotUsedY-1))+latestNotUsedX;
+		
+		Coordinate coordinate = new Coordinate(latestNotUsedX, latestNotUsedY);
+		int position = (10*(coordinate.getX()-1))+coordinate.getY();
+		BoardField boardField;
 		if (randomMinesPositions.contains(position)) {
-			boardFields[latestNotUsedX-1][latestNotUsedY-1] = new MineField(fieldButton, this);
+			boardField = new MineField(fieldButton, this, coordinate);
 			fieldButton.setText("1");
 		} else {
-			boardFields[latestNotUsedX-1][latestNotUsedY-1] = new SafeField(fieldButton, this);
+			boardField = new SafeField(fieldButton, this, coordinate);
 		}
+		boardFields[coordinate.getX()-1][coordinate.getY()-1] = boardField;
 		
-		if (latestNotUsedY >= getHeight()) {
-			if (latestNotUsedX >= getWidth()) {
+		if (latestNotUsedX >= getWidth()) {
+			if (latestNotUsedY >= getHeight()) {
 				checkIfBoardIsValid();
 				latestNotUsedX = -1;
 				latestNotUsedY = -1; 
 			} else {
-				latestNotUsedY = 1;
-				latestNotUsedX++;
+				latestNotUsedX = 1;
+				latestNotUsedY++;
 			}
 		} else {
-			latestNotUsedY++;
+			latestNotUsedX++;
 		}
 	}
 	
@@ -90,12 +157,12 @@ public class BoardModel {
 		
 	}
 	
-	public boolean isMine(int coordinateX, int coordinateY) {
-		return getBoardField(coordinateX, coordinateY) instanceof MineField;
+	public boolean isMine(Coordinate coordinate) {
+		return getBoardField(coordinate) instanceof MineField;
 	}
 	
-	private BoardField getBoardField(int coordinateX, int coordinateY) {
-		return boardFields[coordinateX-1][coordinateY-1];
+	private BoardField getBoardField(Coordinate coordinate) {
+		return boardFields[coordinate.getX()-1][coordinate.getY()-1];
 	}
 	
 	private boolean isBoardInitialized() {
@@ -116,5 +183,9 @@ public class BoardModel {
 	
 	public int getFlagsRemaining() {
 		return flagsRemaining;
+	}
+	
+	public boolean isGameFinished() {
+		return isGameFinished;
 	}
 }
