@@ -37,7 +37,7 @@ public class BoardModel {
 	public void loseGame() {
 		isGameFinished = true;
 		for (int i = 1; i <= getWidth(); i++) {
-			for (int j = 1; j < getHeight(); j++) {
+			for (int j = 1; j <= getHeight(); j++) {
 				Coordinate coordinate = new Coordinate(i, j);
 				if (isMine(coordinate)) {
 					uncover(coordinate);
@@ -49,7 +49,7 @@ public class BoardModel {
 	}
 
 	private void winGame() {
-		
+		controlPanel.stopTimer();
 	}
 	
 	public int getAdjacentMines(Coordinate coordinate) {
@@ -84,8 +84,9 @@ public class BoardModel {
 	}
 
 	public void flag(Coordinate coordinate) {
-		if (flagsRemaining > 0) {
-			getBoardField(coordinate).flag();
+		BoardField boardField = getBoardField(coordinate);
+		if (flagsRemaining > 0 || boardField.isFlagged()) {
+			boardField.flag();
 		}
 	}
 	
@@ -150,7 +151,7 @@ public class BoardModel {
 		}
 		Collections.shuffle(fieldsPositions);
 		
-		return fieldsPositions.subList(0, getMinesRemaining()-1);
+		return fieldsPositions.subList(0, getMinesRemaining());
 	}
 	
 	private void checkIfBoardIsValid() {

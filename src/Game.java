@@ -19,12 +19,10 @@ public class Game implements Runnable {
         frame.setLocation(300, 200);
         frame.setResizable(false);
 
-        // Status panel
-        final JPanel statusPanel = new JPanel();
-        frame.add(statusPanel, BorderLayout.SOUTH);
-        final JLabel status = new JLabel("Running...");
-        statusPanel.add(status);
+        (new ChooseLevel(frame)).openChooseLevelScreen();
 
+        //frame.add(gamePanel, BorderLayout.CENTER);
+        /*
         final ControlPanel controlPanel = new ControlPanel();
         frame.add(controlPanel, BorderLayout.NORTH);
         
@@ -33,12 +31,11 @@ public class Game implements Runnable {
         // Main playing area
         final GamePanel court = new GamePanel(boardModel);
         frame.add(court, BorderLayout.CENTER);
-        
+        */
         // Put the frame on the screen
-        frame.pack();
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
         // Start game
         //court.reset();
     }

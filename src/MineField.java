@@ -18,9 +18,7 @@ public class MineField extends BoardField {
 	public void uncoverListener() {
 		try {
 			ImageIcon icon = null;
-			if (!isFlagged) {
-				icon = new ImageIcon(ImageIO.read(new File(BOMB_FILE)));
-			}
+			icon = new ImageIcon(ImageIO.read(new File(BOMB_FILE)));
 			fieldButton.setIcon(icon);
         } catch (IOException e) {
             System.out.println("Internal Error:" + e.getMessage());

@@ -10,8 +10,8 @@ public abstract class BoardField {
 	final protected Button fieldButton;
 	final protected BoardModel boardModel;
 	final Coordinate coordinate;
-	boolean isFlagged = false;
-	boolean isUncovered = false;
+	private boolean isFlagged = false;
+	private boolean isUncovered = false;
 	
 	BoardField(Button fieldButton, BoardModel boardModel, Coordinate coordinate) {
 		this.fieldButton = fieldButton;
@@ -22,7 +22,8 @@ public abstract class BoardField {
 	public abstract void uncoverListener();
 	
 	public void uncover() {
-		if (!isUncovered && (!boardModel.isGameFinished() || isMine())) {
+		if (!isUncovered && (!isFlagged || boardModel.isGameFinished()) &&
+				(!boardModel.isGameFinished() || isMine())) {
 			isUncovered = true;
 			Button.setLockedStyle(fieldButton);
 			uncoverListener();
@@ -47,5 +48,9 @@ public abstract class BoardField {
         	isFlagged = !isFlagged;
         	boardModel.flag(isMine(), !isFlagged);
         }
+	}
+	
+	public boolean isFlagged() {
+		return isFlagged;
 	}
 }
