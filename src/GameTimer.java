@@ -27,4 +27,8 @@ public class GameTimer extends Counter {
 	public void stopTimer() {
 		isStopped = true;
 	}
+	
+	public int getTimeEllapsed() {
+		return time;
+	}
 }

@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -13,11 +16,12 @@ public class BoardModel {
 	final private Level level;
 	private int minesRemaining;
 	private int flagsRemaining;
-	final List<Integer> randomMinesPositions;
+	private final List<Integer> randomMinesPositions;
 	/* latestNotUsedX and latestNotUsedY are both -1 when board is fully initialized*/
 	private int latestNotUsedX = 1;
 	private int latestNotUsedY = 1;
 	private boolean isGameFinished = false;
+	private boolean isGameLost = false;
 	final private ControlPanel controlPanel;
 	final private JFrame frame;
 	
@@ -40,7 +44,9 @@ public class BoardModel {
 	}
 	
 	public void loseGame() {
-		isGameFinished = true;
+		finishGame();
+		isGameLost = true;
+
 		for (int i = 1; i <= getWidth(); i++) {
 			for (int j = 1; j <= getHeight(); j++) {
 				Coordinate coordinate = new Coordinate(i, j);
@@ -50,7 +56,6 @@ public class BoardModel {
 			}
 		}
 
-		controlPanel.stopTimer();
 		JOptionPane.showMessageDialog(frame,
 			    "You've lost the game. :( Click \"OK\" to start again!",
 			    "You lost",
@@ -59,6 +64,12 @@ public class BoardModel {
 	}
 
 	private void winGame() {
+		finishGame();
+		(new Scores(frame, level)).saveNewWinner(controlPanel.getTimeEllapsed());
+	}
+	
+	private void finishGame() {
+		isGameFinished = true;
 		controlPanel.stopTimer();
 	}
 	
@@ -129,7 +140,7 @@ public class BoardModel {
 		}
 		
 		Coordinate coordinate = new Coordinate(latestNotUsedX, latestNotUsedY);
-		int position = (10*(coordinate.getX()-1))+coordinate.getY();
+		int position = (getWidth()*(coordinate.getY()-1))+coordinate.getX();
 		BoardField boardField;
 		if (randomMinesPositions.contains(position)) {
 			boardField = new MineField(fieldButton, this, coordinate);
@@ -198,5 +209,9 @@ public class BoardModel {
 	
 	public boolean isGameFinished() {
 		return isGameFinished;
+	}
+	
+	public boolean isGameLost() {
+		return isGameLost;
 	}
 }

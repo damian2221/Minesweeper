@@ -42,6 +42,10 @@ public class ControlPanel extends JPanel {
 		gameTimer.stopTimer();
 	}
 	
+	public int getTimeEllapsed() {
+		return gameTimer.getTimeEllapsed();
+	}
+	
 	public void updateFlagCounter(int flagNumber) {
 		flagCounter.update(flagNumber);
 	}

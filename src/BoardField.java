@@ -22,7 +22,7 @@ public abstract class BoardField {
 	public abstract void uncoverListener();
 	
 	public void uncover() {
-		if (!isUncovered && (!isFlagged || boardModel.isGameFinished()) &&
+		if (!isUncovered && (!isFlagged || boardModel.isGameLost()) &&
 				(!boardModel.isGameFinished() || isMine())) {
 			isUncovered = true;
 			Button.setLockedStyle(fieldButton);
