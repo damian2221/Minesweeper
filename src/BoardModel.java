@@ -156,7 +156,6 @@ public class BoardModel {
 		BoardField boardField;
 		if (randomMinesPositions.contains(position)) {
 			boardField = new MineField(fieldButton, this, coordinate);
-			fieldButton.setText("1");
 		} else {
 			boardField = new SafeField(fieldButton, this, coordinate);
 		}

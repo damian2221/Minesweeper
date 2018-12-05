@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.io.BufferedReader;
@@ -7,10 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.function.Consumer;
@@ -103,10 +99,8 @@ public class Scores {
 		winnersBoard.add(table.getTableHeader());
 		winnersBoard.add(table);
 		
-		JOptionPane.showMessageDialog(frame,
-			    winnersBoard,
-			    "Winners Board",
-			    JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(frame, winnersBoard, "Winners Board", 
+				JOptionPane.PLAIN_MESSAGE);
     }
     
     private Map<String, Integer> getCurrentLevel() {
@@ -286,8 +280,8 @@ public class Scores {
     
     private String askForWinnerName() {
 		String name = JOptionPane.showInputDialog(frame, 
-                "Congratulations! You won the game! Please write your name (min. 1 letter, max"
-                + "25 letters a-zA-Z possibly with space) to be saved on the board of winners!", 
+                "Congratulations! You won the game! Please write your name\n(min. 1 letter, max. "
+                + "25 lettersm possibly a-zA-Z with spaces)\n to be saved on the board of winners!", 
                 "You won!!", JOptionPane.PLAIN_MESSAGE);
 		
 		if (name != null && !isCorrectName(name)) {
@@ -302,9 +296,7 @@ public class Scores {
     }
     
     private void showErrorMessage() {
-    	JOptionPane.showMessageDialog(frame,
-			    "There occured an error with scores.txt file!",
-			    "Error",
-			    JOptionPane.ERROR_MESSAGE);
+    	JOptionPane.showMessageDialog(frame, "There occured an error with scores.txt file!",
+			    "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

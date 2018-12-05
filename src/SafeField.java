@@ -34,15 +34,4 @@ public class SafeField extends BoardField {
 	private int countRed(int n) {
 		return Math.min(n*48, 255);
 	}
-	/*
-	private int countGreen(int n) {
-		if (n <= 4) {
-			int green = 32;
-			for (int i = 2; i <= n; i++) {
-				green *= 2;
-			}
-			return Math.min(green, 255);
-		}
-		return countBlue(n-3);
-	}*/
 }
