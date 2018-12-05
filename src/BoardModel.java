@@ -1,3 +1,5 @@
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -40,6 +42,11 @@ public class BoardModel {
 				}
 			}
 		});
+		this.controlPanel.addWinnersBoardFunction(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+            	(new Scores(frame, level)).openWinnersBoard(-1);
+            }
+		});
 		controlPanel.updateFlagCounter(flagsRemaining);
 	}
 	
@@ -65,7 +72,12 @@ public class BoardModel {
 
 	private void winGame() {
 		finishGame();
-		(new Scores(frame, level)).saveNewWinner(controlPanel.getTimeEllapsed());
+		
+		int timeEllapsed = controlPanel.getTimeEllapsed();
+		Scores score = new Scores(frame, level);
+		score.saveNewWinner(timeEllapsed);
+		score.openWinnersBoard(timeEllapsed);
+		controlPanel.restartGame();
 	}
 	
 	private void finishGame() {
@@ -136,7 +148,7 @@ public class BoardModel {
 	
 	public void addBoardField(Button fieldButton) {
 		if (isBoardInitialized()) {
-			//error
+			return;
 		}
 		
 		Coordinate coordinate = new Coordinate(latestNotUsedX, latestNotUsedY);
@@ -152,7 +164,6 @@ public class BoardModel {
 		
 		if (latestNotUsedX >= getWidth()) {
 			if (latestNotUsedY >= getHeight()) {
-				checkIfBoardIsValid();
 				latestNotUsedX = -1;
 				latestNotUsedY = -1; 
 			} else {
@@ -173,10 +184,6 @@ public class BoardModel {
 		Collections.shuffle(fieldsPositions);
 		
 		return fieldsPositions.subList(0, getMinesRemaining());
-	}
-	
-	private void checkIfBoardIsValid() {
-		
 	}
 	
 	public boolean isMine(Coordinate coordinate) {

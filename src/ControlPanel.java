@@ -10,28 +10,33 @@ import javax.swing.*;
 
 public class ControlPanel extends JPanel {
     private static final String SMILE_FILE = "files/smile.png";
-    private static final int BUTTONS_PADDING = 5;
+    private static final int PADDING = 5;
     private static final int PANEL_HEIGHT = 40;
     private final GameTimer gameTimer;
     private final Counter flagCounter;
     private final JFrame frame;
+    private JButton winnersBoardButton;
     
 	ControlPanel(JFrame frame) {
 		this.frame = frame;
 		
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-		
+
+		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
 		gameTimer = new GameTimer();
 		add(gameTimer);
-		
+
 		add(Box.createHorizontalGlue());
+		createWinnersBoardButton();
+		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
 		createResetButton();
-		add(Box.createRigidArea(new Dimension(BUTTONS_PADDING, PANEL_HEIGHT)));
+		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
 		createInstructionsButton();
 		add(Box.createHorizontalGlue());
 		
 		flagCounter = new Counter();
 		add(flagCounter);
+		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
 	}
 	
 	public void startTimer(TimeListener timeListener) {
@@ -52,6 +57,20 @@ public class ControlPanel extends JPanel {
 	
 	public void restartGame() {
     	(new ChooseLevel(frame)).openChooseLevelScreen();
+	}
+	
+	public void addWinnersBoardFunction(MouseAdapter mouseAdapter) {
+		winnersBoardButton.addMouseListener(mouseAdapter);
+	}
+	
+	private void createWinnersBoardButton() {
+		winnersBoardButton = new Button(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {}
+        });
+		
+		winnersBoardButton.setText("W");
+		winnersBoardButton.setFont(winnersBoardButton.getFont().deriveFont(14.0f));
+		add(winnersBoardButton);
 	}
 	
 	private void createResetButton() {
@@ -78,6 +97,7 @@ public class ControlPanel extends JPanel {
         });
 		
 		instructionsButton.setText("?");
+		instructionsButton.setFont(instructionsButton.getFont().deriveFont(14.0f));
 		instructionsButton.setHorizontalAlignment(SwingConstants.CENTER);
 		add(instructionsButton);
 	}

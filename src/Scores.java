@@ -1,15 +1,28 @@
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.function.Consumer;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 public class Scores {
     private static final String SCORES_FILE = "files/scores.txt";
@@ -20,21 +33,97 @@ public class Scores {
     private BufferedReader scoresReader;
     private BufferedWriter scoresWriter;
     private Map<Level, Map<String, Integer>> winners;
+    private Map<String, Integer> currentLevel;
     
     Scores(JFrame frame, Level level) {
     	this.frame = frame;
     	this.level = level;
     	openScoresReader();
+    	currentLevel = getCurrentLevel();
     }
     
-    public void saveNewWinner(int score) {
-		if (winners == null) {
+    public void openWinnersBoard(int seconds) {
+		if (currentLevel == null) {
 			return;
+		}
+		final JPanel winnersBoard = new JPanel();
+		winnersBoard.setLayout(new BoxLayout(winnersBoard, BoxLayout.PAGE_AXIS));
+		
+		if (seconds >= 0) {
+			JLabel titleLabel = new JLabel("Congratulations! You won in " + 
+					Integer.toString(seconds) + " seconds!");
+			titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+			winnersBoard.add(titleLabel);
+		}
+		
+		winnersBoard.add(Box.createRigidArea(new Dimension(200, 0)));
+		JLabel titleLabel = new JLabel("Winners board in " + level.toString().toLowerCase() + 
+				" level");
+		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		winnersBoard.add(titleLabel);
+		winnersBoard.add(Box.createRigidArea(new Dimension(200, 0)));
+		
+        class WinnersDataConsumer implements Consumer<Map.Entry<String, Integer>> {
+        	private int i = 1;
+    		private Vector<Vector<String>> winnersData = new Vector<Vector<String>>();
+        	public void accept(Map.Entry<String, Integer> winner) {
+        		Vector<String> newRow = new Vector<String>();
+        		newRow.add(Integer.toString(i) + ".");
+        		newRow.add(winner.getKey());
+        		newRow.add(Integer.toString(winner.getValue()) + " sec.");
+        		winnersData.add(newRow);
+        		i++;
+        	}
+        	public Vector<Vector<String>> getWinnersData() {
+        		return winnersData;
+        	}
+        }
+        
+		WinnersDataConsumer eachMapEntry = new WinnersDataConsumer();
+		
+		winners.get(level).entrySet().stream()
+	        .sorted(Map.Entry.<String, Integer>comparingByValue())
+	        .forEachOrdered(eachMapEntry);
+		Vector<String> columnNames = new Vector<String>();
+		columnNames.add("Lp.");
+		columnNames.add("Winner name");
+		columnNames.add("Score");
+
+		JTable table = new JTable(eachMapEntry.getWinnersData(), columnNames);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		for (int i = 0; i < 3; i++) {
+		    TableColumn column = table.getColumnModel().getColumn(i);
+		    switch(i) {
+		    case 0: column.setPreferredWidth(35);break;
+		    case 1: column.setPreferredWidth(235);break;
+		    default: column.setPreferredWidth(60);break;
+		    }
+		}
+
+		winnersBoard.add(table.getTableHeader());
+		winnersBoard.add(table);
+		
+		JOptionPane.showMessageDialog(frame,
+			    winnersBoard,
+			    "Winners Board",
+			    JOptionPane.PLAIN_MESSAGE);
+    }
+    
+    private Map<String, Integer> getCurrentLevel() {
+		if (winners == null) {
+			return null;
 		}
 		Map<String, Integer> currentLevel = winners.get(level);
 		if (currentLevel == null) {
 			currentLevel = new HashMap<String, Integer>();
 			winners.put(level, currentLevel);
+		}
+		return currentLevel;
+    }
+    
+    public void saveNewWinner(int score) {
+		if (currentLevel == null) {
+			return;
 		}
 
 		Map.Entry<String, Integer> worstScoreWinner = getWorstScoreInLevel();
@@ -44,6 +133,10 @@ public class Scores {
 		}
 		
 		String winnerName = askForWinnerName();
+		
+		if (winnerName == null) {
+			return;
+		}
 		
 		if (currentLevel.size() >= MAX_SCORES_IN_ONE_LEVEL) {
 			currentLevel.remove(worstScoreWinner.getKey());
@@ -197,7 +290,7 @@ public class Scores {
                 + "25 letters a-zA-Z possibly with space) to be saved on the board of winners!", 
                 "You won!!", JOptionPane.PLAIN_MESSAGE);
 		
-		if (!isCorrectName(name)) {
+		if (name != null && !isCorrectName(name)) {
 			return askForWinnerName();
 		}
 		

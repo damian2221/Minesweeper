@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +21,28 @@ public class SafeField extends BoardField {
 			}
 		} else {
 			fieldButton.setText(Integer.toString(adjacentMines));
+			fieldButton.setForeground(new Color(countRed(adjacentMines), 0, 
+					countBlue(adjacentMines)));
+			fieldButton.setFont(fieldButton.getFont().deriveFont(14.0f));
 		}
 	}
+
+	private int countBlue(int n) {
+		return 255-(n-1)*32;
+	}
+	
+	private int countRed(int n) {
+		return Math.min(n*48, 255);
+	}
+	/*
+	private int countGreen(int n) {
+		if (n <= 4) {
+			int green = 32;
+			for (int i = 2; i <= n; i++) {
+				green *= 2;
+			}
+			return Math.min(green, 255);
+		}
+		return countBlue(n-3);
+	}*/
 }

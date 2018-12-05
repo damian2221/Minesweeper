@@ -4,10 +4,6 @@
  * @version 2.1, Apr 2017
  */
 
-// imports necessary libraries for Java swing
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
 
 /**
@@ -21,23 +17,8 @@ public class Game implements Runnable {
 
         (new ChooseLevel(frame)).openChooseLevelScreen();
 
-        //frame.add(gamePanel, BorderLayout.CENTER);
-        /*
-        final ControlPanel controlPanel = new ControlPanel();
-        frame.add(controlPanel, BorderLayout.NORTH);
-        
-        final BoardModel boardModel = new BoardModel(Level.HARD, controlPanel);
-
-        // Main playing area
-        final GamePanel court = new GamePanel(boardModel);
-        frame.add(court, BorderLayout.CENTER);
-        */
-        // Put the frame on the screen
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        // Start game
-        //court.reset();
     }
 
     /**
