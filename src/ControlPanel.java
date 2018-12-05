@@ -1,5 +1,4 @@
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -10,6 +9,8 @@ import javax.swing.*;
 
 public class ControlPanel extends JPanel {
     private static final String SMILE_FILE = "files/smile.png";
+    private static final String CUP_FILE = "files/cup.png";
+    private static final String INFO_FILE = "files/info.png";
     private static final int PADDING = 5;
     private static final int PANEL_HEIGHT = 40;
     private final GameTimer gameTimer;
@@ -22,10 +23,20 @@ public class ControlPanel extends JPanel {
 		
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
+		gameTimer = createGameTimer();
+		createMiddleButtons();
+		flagCounter = createFlagCounter();
+	}
+	
+	final private GameTimer createGameTimer() {
 		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
-		gameTimer = new GameTimer();
+		GameTimer gameTimer = new GameTimer();
 		add(gameTimer);
-
+		
+		return gameTimer;
+	}
+	
+	final private void createMiddleButtons() {
 		add(Box.createHorizontalGlue());
 		createWinnersBoardButton();
 		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
@@ -33,10 +44,14 @@ public class ControlPanel extends JPanel {
 		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
 		createInstructionsButton();
 		add(Box.createHorizontalGlue());
-		
-		flagCounter = new Counter();
+	}
+	
+	final private Counter createFlagCounter() {
+		Counter flagCounter = new Counter();
 		add(flagCounter);
 		add(Box.createRigidArea(new Dimension(PADDING, PANEL_HEIGHT)));
+		
+		return flagCounter;
 	}
 	
 	public void startTimer(TimeListener timeListener) {
@@ -68,9 +83,8 @@ public class ControlPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {}
         });
 		
-		winnersBoardButton.setText("W");
-		winnersBoardButton.setFont(winnersBoardButton.getFont().deriveFont(14.0f));
-		add(winnersBoardButton);
+
+		addButton(winnersBoardButton, CUP_FILE);
 	}
 	
 	private void createResetButton() {
@@ -79,14 +93,8 @@ public class ControlPanel extends JPanel {
 	            	restartGame();
 	            }
 	        });
-		
-        try {
-        	resetButton.setIcon(new ImageIcon(ImageIO.read(new File(SMILE_FILE))));
-        } catch (IOException e) {
-            System.out.println("Internal Error:" + e.getMessage());
-        }
-        
-        add(resetButton);
+
+		addButton(resetButton, SMILE_FILE);
 	}
 	
 	private void createInstructionsButton() {
@@ -96,9 +104,16 @@ public class ControlPanel extends JPanel {
             }
         });
 		
-		instructionsButton.setText("?");
-		instructionsButton.setFont(instructionsButton.getFont().deriveFont(14.0f));
-		instructionsButton.setHorizontalAlignment(SwingConstants.CENTER);
-		add(instructionsButton);
+		addButton(instructionsButton, INFO_FILE);
+	}
+	
+	private void addButton(JButton button, String iconFile) {
+		try {
+			button.setIcon(new ImageIcon(ImageIO.read(new File(iconFile))));
+        } catch (IOException e) {
+            System.out.println("Internal Error:" + e.getMessage());
+        }
+		
+		add(button);
 	}
 }

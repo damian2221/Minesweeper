@@ -1,8 +1,5 @@
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,30 +16,34 @@ public class BoardModel {
 	private int minesRemaining;
 	private int flagsRemaining;
 	private final List<Integer> randomMinesPositions;
-	/* latestNotUsedX and latestNotUsedY are both -1 when board is fully initialized*/
-	private int latestNotUsedX = 1;
-	private int latestNotUsedY = 1;
 	private boolean isGameFinished = false;
 	private boolean isGameLost = false;
 	final private ControlPanel controlPanel;
 	final private JFrame frame;
+	
+	/* latestNotUsedX and latestNotUsedY are both -1 when board is fully initialized*/
+	private int latestNotUsedX = 1;
+	private int latestNotUsedY = 1;
 	
 	BoardModel(Level level, ControlPanel controlPanel, JFrame frame) {
 		this.level = level;
 		minesRemaining = flagsRemaining = level.getMines();
 		randomMinesPositions = randomizeMinesPositions();
 		boardFields = new BoardField[getWidth()][getHeight()];
-
 		this.frame = frame;
 		this.controlPanel = controlPanel;
-		this.controlPanel.startTimer(new TimeListener() {
+		initializeControlPanel();
+	}
+	
+	final private void initializeControlPanel() {
+		controlPanel.startTimer(new TimeListener() {
 			public void timeChanged(int time) {
 				if (time >= LOSE_GAME_TIME) {
 					loseGame();
 				}
 			}
 		});
-		this.controlPanel.addWinnersBoardFunction(new MouseAdapter() {
+		controlPanel.addWinnersBoardFunction(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
             	(new Scores(frame, level)).openWinnersBoard(-1);
             }
@@ -53,7 +54,16 @@ public class BoardModel {
 	public void loseGame() {
 		finishGame();
 		isGameLost = true;
+		uncoverAllMines();
 
+		JOptionPane.showMessageDialog(frame,
+			    "You've lost the game. :( Click \"OK\" to start again!",
+			    "You lost",
+			    JOptionPane.PLAIN_MESSAGE);
+		controlPanel.restartGame();
+	}
+	
+	private void uncoverAllMines() {
 		for (int i = 1; i <= getWidth(); i++) {
 			for (int j = 1; j <= getHeight(); j++) {
 				Coordinate coordinate = new Coordinate(i, j);
@@ -62,12 +72,6 @@ public class BoardModel {
 				}
 			}
 		}
-
-		JOptionPane.showMessageDialog(frame,
-			    "You've lost the game. :( Click \"OK\" to start again!",
-			    "You lost",
-			    JOptionPane.PLAIN_MESSAGE);
-		controlPanel.restartGame();
 	}
 
 	private void winGame() {
@@ -85,22 +89,6 @@ public class BoardModel {
 		controlPanel.stopTimer();
 	}
 	
-	public int getAdjacentMines(Coordinate coordinate) {
-		int adjacentMines = 0;
-		for (int i = Math.max(coordinate.getX()-1, 1); 
-				i <= Math.min(coordinate.getX()+1, getWidth()); i++) {
-			for (int j = Math.max(coordinate.getY()-1, 1); 
-					j <= Math.min(coordinate.getY()+1, getHeight()); j++) {
-				if ((i != coordinate.getX() || j != coordinate.getY()) && 
-						isMine(new Coordinate(i, j))) {
-					adjacentMines++;
-				}
-			}
-		}
-		
-		return adjacentMines;
-	}
-	
 	public List<Coordinate> getAdjacentFields(Coordinate coordinate) {
 		List<Coordinate> adjacentFields = new LinkedList<Coordinate>();
 		for (int i = Math.max(coordinate.getX()-1, 1); 
@@ -114,6 +102,18 @@ public class BoardModel {
 		}
 		
 		return adjacentFields;
+	}
+	
+	public int getAdjacentMines(Coordinate coordinate) {
+		int adjacentMines = 0;
+		List<Coordinate> adjacentFields = getAdjacentFields(coordinate);
+		for (int i = 0; i < adjacentFields.size(); i++) {
+			if (isMine(adjacentFields.get(i))) {
+				adjacentMines++;
+			}
+		}
+		
+		return adjacentMines;
 	}
 
 	public void flag(Coordinate coordinate) {
