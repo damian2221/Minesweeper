@@ -15,7 +15,7 @@ public class MineField extends BoardField {
 		return true;
 	}
 	
-	public void uncoverListener() {
+	protected void uncoverListener() {
 		try {
 			ImageIcon icon = null;
 			icon = new ImageIcon(ImageIO.read(new File(BOMB_FILE)));

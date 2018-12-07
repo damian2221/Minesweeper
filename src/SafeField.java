@@ -11,7 +11,7 @@ public class SafeField extends BoardField {
 		return false;
 	}
 	
-	public void uncoverListener() {
+	protected void uncoverListener() {
 		final int adjacentMines = boardModel.getAdjacentMines(coordinate);
 		if (adjacentMines == 0) {
 			final List<Coordinate> adjacentFields = boardModel.getAdjacentFields(coordinate);

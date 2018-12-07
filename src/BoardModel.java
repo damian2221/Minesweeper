@@ -186,7 +186,7 @@ public class BoardModel {
 	}
 	
 	public boolean isMine(Coordinate coordinate) {
-		return getBoardField(coordinate) instanceof MineField;
+		return getBoardField(coordinate).isMine();
 	}
 	
 	private BoardField getBoardField(Coordinate coordinate) {

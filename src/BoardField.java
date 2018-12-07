@@ -19,7 +19,7 @@ public abstract class BoardField {
 		this.coordinate = coordinate;
 	}
 	
-	public abstract void uncoverListener();
+	protected abstract void uncoverListener();
 	
 	public void uncover() {
 		if (!isUncovered && (!isFlagged || boardModel.isGameLost()) &&
