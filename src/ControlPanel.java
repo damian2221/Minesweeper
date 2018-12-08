@@ -100,7 +100,25 @@ public class ControlPanel extends JPanel {
 	private void createInstructionsButton() {
 		final JButton instructionsButton = new Button(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                //court.reset();
+            	JOptionPane.showMessageDialog(frame, "Instructions:\n"
+            		+ "You are playing the MineSweeper! This is a traditional MineSweeper with\n"
+            		+ "no unusual features except for the buttons openning the table with\n"
+            		+ "winners and instructions. At first you have to choose one of 3 levels:\n"
+            		+ "Easy (board 10x10 with 10 mines), Medium (board 20x20 with 50 mines)\n"
+            		+ "and Hard (board 20x30 with 100 mines). Then you proceed to the game.\n"
+            		+ "You can restart the game at any point by clicking the smiled face at\n"
+            		+ "the top of the game frame. You lose the game when 999 seconds will pass\n"
+            		+ "without discovering all mines. You also lose when you discover a mine.\n"
+            		+ "You can discover a field in the board by clicking it with left-click.\n"
+            		+ "If this field is not a mine, then you will discover a number which\n"
+            		+ "denotes the number of adjacent mines to this field (if it is 0, it will\n"
+            		+ "automatically discover all adjacent fields). If you think that there is\n"
+            		+ "a mine under some covered field, you can flag it with right-click. You\n"
+            		+ "have a limited number of flags (look at the counter at the top-right\n"
+            		+ "side of the game screen). To win the game, you should correctly flag\n"
+            		+ "all the mines. The lower the time, the better - only the lowest 5\n"
+            		+ "scores in each level appears on the winners' board.",
+        			"Instructions", JOptionPane.PLAIN_MESSAGE);
             }
         });
 		
